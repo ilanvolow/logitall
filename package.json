@@ -1,18 +1,27 @@
 {
   "name": "logitall",
   "version": "1.0.0",
-  "description": "A program for making your code log everything",
+  "description": "A program for making your code console.log() everything",
   "main": "index.js",
+  "repository": "https://github.com/ilanvolow/logitall.git",
+  "author": "Ilan Volow <ilanvolow@gmail.com> (https://github.com/ilanvolow)",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "logitall": "node bin/logitall.js"
+  },
+  "bin": {
+    "logitall": "./bin/logitall.js"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "chalk": "^3.0.0",
+    "commander": "^4.1.1",
+    "jscodeshift": "^0.7.0",
+    "jscodeshift-helper": "^1.1.0",
+    "lodash": "^4.17.15"
   },
   "keywords": [
     "console.log",
     "all"
   ],
-  "author": "Ilan Volow <ilanvolow@gmail.com> (https://github.com/ilanvolow)",
-  "license": "MIT",
-  "dependencies": {
-    "jscodeshift": "^0.7.0"
-  }
+  "license": "MIT"
 }
