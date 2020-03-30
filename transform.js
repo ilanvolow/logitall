@@ -47,7 +47,7 @@ module.exports = function(fileInfo, api, options) {
     }
 
     const addLoggingToFunctionDeclarations = (path, filepath) => {
-        path.find(j.FunctionDeclartion)
+        path.find(j.FunctionDeclaration)
         .forEach(p => {
             let functionBlockBody = p.node.body.body;
             let functionName = p.node.id.name;
@@ -161,6 +161,23 @@ module.exports = function(fileInfo, api, options) {
             })
     }
 
+    const addLoggingToReturnStatement = (path, filepath) => {
+        path.find(j.ReturnStatement)
+            .forEach(p => {
+                let relPathToFile = calculatedRelPath(filepath, relPath);
+                let linenum = PRINT_LINE_NUMBERS ? `${p.node.loc.start.line}` : '';
+
+                p.insertBefore(
+                    j.expressionStatement(
+                        j.callExpression(
+                            j.identifier('console.log'),
+                                [ j.literal(`${LIA_PREFIX}${relPathToFile}:${linenum}${LIA_SUFFIX}`)]
+                        )
+                    )
+                );
+            })
+    }
+
     // UTILITY METHODS
     const buildAnonymousParamsList = (paramNodes) => {
         let paramString = '(';
@@ -207,6 +224,7 @@ module.exports = function(fileInfo, api, options) {
     addLoggingToArrowFunctions(root, fileInfo.path);
     addLoggingToAnonymousFunctions(root, fileInfo.path);
     addLoggingToExpressionStatement(root, fileInfo.path);
+    addLoggingToReturnStatement(root, fileInfo.path);
 
     return root.toSource();
 }
