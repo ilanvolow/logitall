@@ -6,7 +6,7 @@ module.exports = function(fileInfo, api, options) {
     const root = j(fileInfo.source);
     const relPath = options['relpath'];
 
-    const LIA_PREFIX = '[lina]  ';
+    const LIA_PREFIX = '[lin]  ';
     const LIA_SUFFIX = '';
     const PRINT_LINE_NUMBERS = true;
 
@@ -15,16 +15,16 @@ module.exports = function(fileInfo, api, options) {
             .forEach(p => {
 
                 let methodName = p.node.key.name;
-                let methodBlockBody = p.node.body.body
+                let methodBlockBody = p.node.body.body;
                 let linenum = PRINT_LINE_NUMBERS ? `${getFunctionStartLineNumber(p)}:` : '';
 
                 let relPathToFile = calculatedRelPath(filepath, relPath);
 
                 // Check for super() call
-                if(methodBlockBody.length > 0) {
+                if (methodBlockBody.length > 0) {
                     let hasSuperCall = hasSuper(methodBlockBody[0]);
                     if (hasSuperCall) {
-                        methodBlockBody.split(1, 0, 
+                        methodBlockBody.splice(1, 0, 
                             j.expressionStatement(
                                 j.callExpression(
                                     j.identifier('console.log'),
@@ -63,7 +63,7 @@ module.exports = function(fileInfo, api, options) {
                         [ j.literal(`${LIA_PREFIX}${relPathToFile}:${linenum}${functionName}${paramString}${LIA_SUFFIX}`)]
                     )
                 )
-            )
+            );
         });
     }
 
@@ -84,7 +84,7 @@ module.exports = function(fileInfo, api, options) {
                     )
                 )
             )
-        })
+        });
     }
 
     const addLoggingToArrowFunctions = (path, filepath) => {
@@ -100,7 +100,7 @@ module.exports = function(fileInfo, api, options) {
 
                 // TODO: add handling for arrow functions that return arrow functions
                 // let myFunc = stuff => things => {
-                //    
+                //
                 // }
 
                 if (Array.isArray(blockStatementBody)) {
@@ -115,7 +115,7 @@ module.exports = function(fileInfo, api, options) {
                 }
              } else if (_.get(p, 'node.body', false)) {
                 // TODO: fix the handling for single line arrow functions
-                // e.g. counst myFun = id => 5
+                // e.g. const myFun = id => 5
                 //
                 // describe(p.parent);
                 // p.parent.insertBefore(
@@ -183,7 +183,7 @@ module.exports = function(fileInfo, api, options) {
         let paramString = '(';
 
         for (let index = 0; index < paramNodes.length; index++) {
-            paramString = paramString + paramNodes[index].node;
+            paramString = paramString + paramNodes[index].name;
             
             if (index !== (paramNodes.length - 1)) {
                 paramString = paramString + ', ';
@@ -199,7 +199,7 @@ module.exports = function(fileInfo, api, options) {
         // immediately after it
         let returnSuper = false;
 
-        if(_.get(p, 'expression.type', false)) {
+        if (_.get(p, 'expression.type', false)) {
             let calleeType = _.get(p, 'expression.callee.type', '');
             if (calleeType === 'Super') {
                 returnSuper = true;
