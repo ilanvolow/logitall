@@ -6,7 +6,7 @@ module.exports = function(fileInfo, api, options) {
     const root = j(fileInfo.source);
     const relPath = options['relpath'];
 
-    const LIA_PREFIX = '[lin]  ';
+    const LIA_PREFIX = '[logitall]  ';
     const LIA_SUFFIX = '';
     const PRINT_LINE_NUMBERS = true;
 
@@ -143,6 +143,13 @@ module.exports = function(fileInfo, api, options) {
                 if (expressionType === 'CallExpression') {
                     let functionName = _.get(p, 'node.expression.callee.name', '');
                     if (functionName === 'console.log') {
+                        return;
+                    }
+
+                    // Check to see whether the function is a Super initializer function.
+                    // If so, skip to the next
+                    let functionType = _.get(p, 'node.expression.callee.type', '');
+                    if (functionType === 'Super') {
                         return;
                     }
                 }
