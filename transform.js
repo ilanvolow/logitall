@@ -154,6 +154,15 @@ module.exports = function(fileInfo, api, options) {
                     }
                 }
 
+                // Skip instances where the expression statement is the consequent of an if statment
+                // where the braces have been omitted
+                // if (foo === 5)
+                //     bar = baz;
+                let nodeType = _.get(p, 'parent.node.type', '');
+                if (nodeType === 'IfStatement') {
+                    return;
+                }
+
                 let relPathToFile = calculatedRelPath(filepath, relPath);
                 let linenum = PRINT_LINE_NUMBERS ? `${p.node.loc.start.line}` : '';
 
