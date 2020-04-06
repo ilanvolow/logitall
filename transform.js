@@ -180,6 +180,14 @@ module.exports = function(fileInfo, api, options) {
     const addLoggingToReturnStatement = (path, filepath) => {
         path.find(j.ReturnStatement)
             .forEach(p => {
+                // Skip instances where the return statement is the consequent of an if statment
+                // where the braces have been omitted
+                // if (thing.foo === bar) return thing
+                let nodeType = _.get(p, 'parent.node.type', '');
+                if (nodeType === 'IfStatement') {
+                    return;
+                }
+
                 let relPathToFile = calculatedRelPath(filepath, relPath);
                 let linenum = PRINT_LINE_NUMBERS ? `${p.node.loc.start.line}` : '';
 
